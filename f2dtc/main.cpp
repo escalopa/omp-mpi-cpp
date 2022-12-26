@@ -1,5 +1,6 @@
 #include <iostream>
 #include <mpi.h>
+#include <fstream>
 
 double getLambda(double x, double y) {
     return 0.25 <= x && x <= 0.65 &&
@@ -68,10 +69,19 @@ void logMatrix(double* matrix, const int size) {
     std::cout << "\n";
 }
 
+void logFile(double* matrix, const int size, std::ofstream& file) {
+    for (int i = 1; i < size - 1; ++i) {
+        for (int j = 1; j < size - 1; ++j) {
+            file << matrix[i * size + j] << " ";
+        }
+        file << "\n";
+    }
+}
+
 int main(int argc, char** argv) {
-    const int size = 4;
-    const int iterations = 100;
-    const int logStep = iterations/size;
+    const int size = 30; // 30
+    const int iterations = 3000; //3000
+    const int logStep = 100;
     const double timeStep = 0.2;
     const double TxLeft = 600;
     const double TxRight = 1200;
@@ -81,7 +91,7 @@ int main(int argc, char** argv) {
     const double yEnd = 0.5;
     const double xStep = (xEnd - xStart) / size;
     const double yStep = (yEnd - yStart) / size;
-
+    std::ofstream file;
     int processesCount, rank;
 
     double lambdaByX[size][size];
@@ -126,6 +136,7 @@ int main(int argc, char** argv) {
     double fReceive[size];
 
     if (rank == 0) {
+        file.open("result.txt");
         double temperature[size * size];
         double F[size * size];
 
@@ -182,8 +193,10 @@ int main(int argc, char** argv) {
 
             if (t % logStep == 0) {
                 logMatrix(temperature, size);
+                logFile(temperature, size, file);
             }
         }
+        file.close();
     } else {
         for (int t = 0; t < iterations; ++t) {
 
