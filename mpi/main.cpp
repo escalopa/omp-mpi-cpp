@@ -149,59 +149,57 @@ using namespace std;
 
 //// -------------------------------------- каскадное суммирование -------------------------------------- //
 
-#include <cmath>
-
-// function
-double f(double x){
-    return pow(2.0, x);
-}
-// method for solve
-double Left_Rectangle(double a, double b, int n){
-    //count steps/area
-    double h =(b-a)/n;
-    double sum = 0.0;
-    for(int i=0; i<n; i++){
-        sum+= h* f(a+i*h);
-    }
-    return sum;
-}
-
-int main(int argc, char **argv) {
-    /* Starts MPI processes ... */
-    int rank, source, tag, dest;
-    MPI_Status status;
-    int world_size;
-    double result;
-
-    dest = 0;         /* define the process that computes the final result */
-    tag = 123;        /* set the tag to identify this particular job */
-
-
-    MPI_Init(&argc,&argv);              /* starts MPI */
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);  /* get current process id */
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);     /* get number of processes */
-    // a= min , b=max
-    double a,b, my_result;
-    //cant. interval
-    int n;
-    a = 1;
-    b = 3;
-    n = 1000;
-    my_result = Left_Rectangle(a,b,n);
-    cout << " solution of integral " << Left_Rectangle(a,b,n) << endl;
-    if(rank == 0) {
-        result = my_result;
-        for (int i=1;i<world_size;i++) {
-            source = i;           /* MPI process number range is [0,p-1] */
-            MPI_Recv(&my_result, 1, MPI_DOUBLE, source, tag,
-                     MPI_COMM_WORLD, &status);
-            result += my_result;
-        }
-        printf("The result =%f\n",result);
-    }
-    else
-        MPI_Send(&my_result, 1, MPI_DOUBLE, dest, tag,MPI_COMM_WORLD); /* send my_result to intended dest.*/
-    MPI_Finalize();
-    return 0;
-
-}
+//#include <cmath>
+//
+//double f(double x){
+//    return pow(2.0, x);
+//}
+//double Left_Rectangle(double a, double b, int n){
+//    //count steps/area
+//    double h =(b-a)/n;
+//    double sum = 0.0;
+//    for(int i=0; i<n; i++){
+//        sum+= h* f(a+i*h);
+//    }
+//    return sum;
+//}
+//
+//int main(int argc, char **argv) {
+//    /* Starts MPI processes ... */
+//    int rank, source, tag, dest;
+//    MPI_Status status;
+//    int world_size;
+//    double result;
+//
+//    dest = 0;         /* define the process that computes the final result */
+//    tag = 123;        /* set the tag to identify this particular job */
+//
+//
+//    MPI_Init(&argc,&argv);              /* starts MPI */
+//    MPI_Comm_rank(MPI_COMM_WORLD, &rank);  /* get current process id */
+//    MPI_Comm_size(MPI_COMM_WORLD, &world_size);     /* get number of processes */
+//    // a= min , b=max
+//    double a,b, my_result;
+//    //cant. interval
+//    int n;
+//    a = 1;
+//    b = 3;
+//    n = 1000;
+//    my_result = Left_Rectangle(a,b,n);
+//    cout << " solution of integral " << Left_Rectangle(a,b,n) << endl;
+//    if(rank == 0) {
+//        result = my_result;
+//        for (int i=1;i<world_size;i++) {
+//            source = i;           /* MPI process number range is [0,p-1] */
+//            MPI_Recv(&my_result, 1, MPI_DOUBLE, source, tag,
+//                     MPI_COMM_WORLD, &status);
+//            result += my_result;
+//        }
+//        printf("The result =%f\n",result);
+//    }
+//    else
+//        MPI_Send(&my_result, 1, MPI_DOUBLE, dest, tag,MPI_COMM_WORLD); /* send my_result to intended dest.*/
+//    MPI_Finalize();
+//    return 0;
+//
+//}
