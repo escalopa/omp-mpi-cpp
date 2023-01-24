@@ -203,3 +203,48 @@ using namespace std;
 //    return 0;
 //
 //}
+
+//// -------------------------------------- Send-Receive -------------------------------------- //
+
+//int main(int argc, char **argv) {
+//    int rank;
+//    MPI_Status status;
+//    MPI_Init(&argc, &argv);
+//    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+//
+//    int a[5];
+//    a[0] = 10;
+//    a[1] = rank;
+//    if (rank == 0) {
+//        MPI_Send(&a[1], 1, MPI_INT, 1, 99, MPI_COMM_WORLD);
+//    } else {
+//        MPI_Recv(&a[0], 1, MPI_INT, 0, 99, MPI_COMM_WORLD, &status);
+//        cout << a[0];
+//    }
+//    MPI_Finalize();
+//}
+
+
+//// -------------------------------------- Reduce -------------------------------------- //
+
+int main(int argc, char *argv[]) {
+    int rank, size;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    int sendarray[100];
+    // init send array
+    for (int i = 0; i < 100; i++) {
+        sendarray[i] = 1000 * rank + i;
+    }
+    int rbuf[100];
+    MPI_Reduce(sendarray, rbuf, 100, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    if (rank == 0) {
+        printf("Result in buffer: ");
+        for (int i = 0; i < 100; i++) {
+            printf("%d ", rbuf[i]);
+        }
+        printf("\n");
+    }
+    MPI_Finalize();
+}
